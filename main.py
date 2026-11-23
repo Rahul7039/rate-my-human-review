@@ -44,6 +44,14 @@ def main() -> None:
     os.makedirs(os.path.dirname(OUTPUT_PATH), exist_ok=True)
     with open(OUTPUT_PATH, "w", encoding="utf-8", newline="") as f:
         f.write(LINE)
+    # Read the file back and re-validate it: the gate scores exactly
+    # what is on disk, so a write that silently changed the text
+    # (encoding, newline translation) must fail loudly here instead.
+    with open(OUTPUT_PATH, "r", encoding="utf-8", newline="") as f:
+        written = f.read()
+    if written != LINE:
+        sys.exit("error: /output/entry.txt does not match the validated line")
+    validate(written)
     print("wrote %s (%d characters)" % (OUTPUT_PATH, len(LINE)))
 
 
